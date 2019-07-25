@@ -15,7 +15,7 @@ export class ProductListAltComponent {
   selectedProductId;
 
   products$ = this.productService
-                  .products$
+                  .productsWithCategories$
                   .pipe(catchError(err => {
                     this.errorMessage = err;
                     return EMPTY;
