@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 import { ProductService } from '../product.service';
 import { catchError } from 'rxjs/operators';
-import { EMPTY } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
 
 @Component({
   selector: 'pm-product-list',
@@ -11,19 +11,20 @@ import { EMPTY } from 'rxjs';
 })
 export class ProductListAltComponent {
   pageTitle = 'Products';
-  errorMessage = '';
-  selectedProductId;
+  private errorMessageSubject = new Subject<string>();
+  errorMessage$ = this.errorMessageSubject.asObservable();
+  selectedProduct$ = this.productService.selectedProduct$;
 
   products$ = this.productService
                   .productsWithCategories$
                   .pipe(catchError(err => {
-                    this.errorMessage = err;
+                    this.errorMessageSubject.next(err);
                     return EMPTY;
                   }));
 
   constructor(private productService: ProductService) { }
 
   onSelected(productId: number): void {
-    console.log('Not yet implemented');
+    this.productService.selectedProductChanged(productId);
   }
 }
